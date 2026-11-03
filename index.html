@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#1b7f4b">
+<title>FreshMart Stock</title>
+<style>
+:root{--g:#1b7f4b;--gd:#145f38;--bg:#f4f7f5;--card:#fff;--tx:#1a2420;--mu:#6b7a73;--bd:#dfe7e2;--red:#c0392b;--amb:#e0a100}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:system-ui,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--tx);padding-bottom:90px}
+header{background:var(--g);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:5}
+header h1{font-size:18px;margin:0;line-height:1.1}
+header small{opacity:.8;font-size:12px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px 12px 4px}
+.stat{background:var(--card);border-radius:12px;padding:10px;border:1px solid var(--bd)}
+.stat b{display:block;font-size:15px}.stat span{font-size:11px;color:var(--mu)}
+.stat.p b{color:var(--g)}
+.search{padding:8px 12px}
+input,select{width:100%;padding:12px;border:1px solid var(--bd);border-radius:10px;font-size:16px;background:#fff;color:var(--tx)}
+label{font-size:12px;color:var(--mu);display:block;margin:10px 0 4px}
+.item{background:var(--card);margin:8px 12px;border-radius:14px;border:1px solid var(--bd);padding:10px;display:flex;gap:10px;align-items:center}
+.thumb{width:64px;height:64px;border-radius:12px;flex:none;object-fit:cover;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:28px;overflow:hidden}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.info{flex:1;min-width:0}
+.info h3{margin:0;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.info .m{font-size:12px;color:var(--mu);margin-top:2px}
+.info .pp{font-size:12px;color:var(--g);font-weight:600;margin-top:2px}
+.qty{text-align:center;flex:none}
+.qty b{font-size:20px;display:block}.qty span{font-size:10px;color:var(--mu)}
+.low b{color:var(--red)}
+.fab{position:fixed;right:16px;bottom:20px;background:var(--g);color:#fff;border:0;border-radius:28px;padding:16px 22px;font-size:16px;font-weight:600;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.sheet{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;z-index:10;align-items:flex-end}
+.sheet.on{display:flex}
+.panel{background:#fff;width:100%;max-height:94vh;overflow:auto;border-radius:20px 20px 0 0;padding:16px}
+.panel h2{margin:0 0 6px;font-size:18px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.photo{display:flex;gap:12px;align-items:center;margin-top:6px}
+.photo .thumb{width:84px;height:84px;font-size:36px}
+.btn{border:0;border-radius:10px;padding:13px;font-size:15px;font-weight:600;width:100%}
+.btn.p{background:var(--g);color:#fff}.btn.s{background:#e8efeb;color:var(--tx)}.btn.d{background:#fdecea;color:var(--red)}
+.calc{background:#eef8f2;border:1px solid #cfe8d9;border-radius:12px;padding:12px;margin-top:12px;font-size:14px}
+.calc div{display:flex;justify-content:space-between;padding:3px 0}
+.calc .big{font-weight:700;color:var(--g);font-size:16px;border-top:1px dashed #b9dcc8;margin-top:4px;padding-top:7px}
+.empty{text-align:center;color:var(--mu);padding:50px 24px}
+.acts{display:flex;gap:8px;margin-top:14px}
+</style>
+</head>
+<body>
+<header>
+  <svg width="38" height="38" viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#fff"/><path d="M14 26h36l-4 22a4 4 0 0 1-4 3H22a4 4 0 0 1-4-3z" fill="#1b7f4b"/><path d="M22 26l8-12M42 26l-8-12" stroke="#e0a100" stroke-width="4" stroke-linecap="round"/><circle cx="26" cy="38" r="3" fill="#fff"/><circle cx="38" cy="38" r="3" fill="#fff"/></svg>
+  <div><h1>FreshMart Stock</h1><small>Step 1 · Products &amp; inventory</small></div>
+</header>
+
+<div class="stats">
+  <div class="stat"><b id="sItems">0</b><span>Products</span></div>
+  <div class="stat"><b id="sValue">K0</b><span>Potential sales</span></div>
+  <div class="stat p"><b id="sProfit">K0</b><span>Projected profit</span></div>
+</div>
+<div class="search"><input id="q" placeholder="Search products…" oninput="render()"></div>
+<div id="list"></div>
+<button class="fab" onclick="openForm()">+ Add product</button>
+
+<div class="sheet" id="sheet" onclick="if(event.target===this)closeForm()">
+  <div class="panel">
+    <h2 id="fTitle">New product</h2>
+    <label>Product photo (tap to take or choose)</label>
+    <div class="photo">
+      <div class="thumb" id="fThumb" onclick="document.getElementById('file').click()">?</div>
+      <div style="flex:1">
+        <button class="btn s" onclick="document.getElementById('file').click()">📷 Capture photo</button>
+        <div style="font-size:11px;color:var(--mu);margin-top:6px">No photo? A logo badge is made automatically from the name.</div>
+      </div>
+    </div>
+    <input type="file" id="file" accept="image/*" capture="environment" hidden onchange="photo(this)">
+
+    <label>Product name</label>
+    <input id="fName" placeholder="e.g. Rice 5kg" oninput="calc();preview()">
+    <div class="row">
+      <div><label>Category</label>
+        <select id="fCat"><option>Staples</option><option>Drinks</option><option>Dairy</option><option>Fresh</option><option>Snacks</option><option>Household</option><option>Other</option></select></div>
+      <div><label>Unit</label><input id="fUnit" value="pcs" placeholder="pcs, kg, pack"></div>
+    </div>
+    <div class="row">
+      <div><label>Cost price (K)</label><input id="fCost" type="number" inputmode="decimal" step="0.01" oninput="fromMarkup()"></div>
+      <div><label>Markup (%)</label><input id="fMark" type="number" inputmode="decimal" step=
