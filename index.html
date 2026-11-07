@@ -438,6 +438,23 @@ function receive(){
 
 setMode('stock');
 render();
+</script><script>
+async function mic(){
+  const qa=document.getElementById('qa');
+  const fb=m=>{qa.focus();toast(m||'Tap the 🎤 on your keyboard, speak, then tap Go')};
+  const SR=window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.SpeechRecognition;
+  if(!SR)return fb();
+  try{
+    const a=await SR.available();
+    if(!a.available)return fb('Speech service not found on this phone. Use the keyboard 🎤.');
+    let p=await SR.checkPermissions();
+    if(p.speechRecognition!=='granted')p=await SR.requestPermissions();
+    if(p.speechRecognition!=='granted')return fb('Microphone is blocked. Allow it in phone Settings > Apps > FreshMart > Permissions.');
+    const r=await SR.start({language:'en-US',maxResults:1,prompt:'Say it now',partialResults:false,popup:true});
+    const t=r&&r.matches&&r.matches[0];
+    if(t){qa.value=t;runCmd()}
+  }catch(e){fb()}
+}
 </script>
 </body>
 </html>
