@@ -26,6 +26,10 @@ jobs:
           sed -i 's#<application#<uses-permission android:name="android.permission.CAMERA" />\n    <uses-permission android:name="android.permission.RECORD_AUDIO" />\n    <application#' android/app/src/main/AndroidManifest.xml
           sed -i 's#</manifest>#    <queries><intent><action android:name="android.speech.RecognitionService" /></intent></queries>\n</manifest>#' android/app/src/main/AndroidManifest.xml
           npx cap sync android
+      - name: Make app icon
+        run: |
+          npm install sharp
+          node make-icons.js
       - name: Use fixed signing key
         run: |
           mkdir -p ~/.android
