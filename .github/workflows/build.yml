@@ -18,7 +18,7 @@ jobs:
       - name: Prepare app files
         run: |
           mkdir www
-          cp index.html www/
+          cp index.htmlstyle.css app.js www/
           npm init -y
           npm install @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7 @capacitor-community/speech-recognition@7
           npx cap init FreshMart com.smmandona.freshmart --web-dir www
