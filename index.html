@@ -3,101 +3,53 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta name="theme-color" content="#1b7f4b">
+<meta name="theme-color" content="#1b7f4b" id="themeMeta">
 <title>FreshMart Stock</title>
-<style>
-:root{--g:#1b7f4b;--gd:#145f38;--bg:#f4f7f5;--card:#fff;--tx:#1a2420;--mu:#6b7a73;--bd:#dfe7e2;--red:#c0392b;--amb:#e0a100}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;font-family:system-ui,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--tx);padding-bottom:90px}
-header{background:var(--g);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:5}
-header h1{font-size:18px;margin:0;line-height:1.1}
-header small{opacity:.8;font-size:12px}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px 12px 4px}
-.stat{background:var(--card);border-radius:12px;padding:10px;border:1px solid var(--bd)}
-.stat b{display:block;font-size:16px}.stat span{font-size:11px;color:var(--mu)}
-.stat.p b{color:var(--g)}
-.search{padding:8px 12px}
-input,select{width:100%;padding:12px;border:1px solid var(--bd);border-radius:10px;font-size:16px;background:#fff;color:var(--tx)}
-label{font-size:12px;color:var(--mu);display:block;margin:10px 0 4px}
-.item{background:var(--card);margin:8px 12px;border-radius:14px;border:1px solid var(--bd);padding:10px;display:flex;gap:10px;align-items:center}
-.thumb{width:64px;height:64px;border-radius:12px;flex:none;object-fit:cover;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:28px;overflow:hidden}
-.thumb img{width:100%;height:100%;object-fit:cover}
-.info{flex:1;min-width:0}
-.info h3{margin:0;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.info .m{font-size:12px;color:var(--mu);margin-top:2px}
-.info .pp{font-size:12px;color:var(--g);font-weight:600;margin-top:2px}
-.qty{text-align:center;flex:none}
-.qty b{font-size:20px;display:block}.qty span{font-size:10px;color:var(--mu)}
-.low b{color:var(--red)}
-.red{color:var(--red);font-weight:600}
-.sellb{border:0;background:var(--g);color:#fff;border-radius:10px;padding:10px 12px;font-weight:600;font-size:13px;flex:none}
-.fab{position:fixed;right:16px;bottom:20px;background:var(--g);color:#fff;border:0;border-radius:28px;padding:16px 22px;font-size:16px;font-weight:600;box-shadow:0 4px 14px rgba(0,0,0,.25)}
-.sheet{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;z-index:10;align-items:flex-end}
-.sheet.on{display:flex}
-.panel{background:#fff;width:100%;max-height:94vh;overflow:auto;border-radius:20px 20px 0 0;padding:16px}
-.panel h2{margin:0 0 6px;font-size:18px}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.photo{display:flex;gap:12px;align-items:center;margin-top:6px}
-.photo .thumb{width:84px;height:84px;font-size:36px}
-.btn{border:0;border-radius:10px;padding:13px;font-size:15px;font-weight:600;width:100%}
-.btn.p{background:var(--g);color:#fff}.btn.s{background:#e8efeb;color:var(--tx)}.btn.d{background:#fdecea;color:var(--red)}
-.calc{background:#eef8f2;border:1px solid #cfe8d9;border-radius:12px;padding:12px;margin-top:12px;font-size:14px}
-.calc div{display:flex;justify-content:space-between;padding:3px 0}
-.calc .big{font-weight:700;color:var(--g);font-size:16px;border-top:1px dashed #b9dcc8;margin-top:4px;padding-top:7px}
-.empty{text-align:center;color:var(--mu);padding:50px 24px}
-.acts{display:flex;gap:8px;margin-top:14px}
-.cmd{background:#fff;margin:8px 12px 0;border:1px solid var(--bd);border-radius:14px;padding:10px}
-.tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
-.tab{border:0;border-radius:10px;padding:11px;font-size:15px;font-weight:700;background:#e8efeb;color:var(--tx)}
-.tab.on{background:var(--g);color:#fff}
-.qa-r{display:flex;gap:6px}
-.qa-r input{flex:1;min-width:0}
-.qa-r button{border:0;border-radius:10px;font-size:15px;font-weight:600;padding:0 14px}
-.qa-r .mic{background:#e8efeb;font-size:20px}
-.qa-r .go{background:var(--g);color:#fff}
-.qa-t{font-size:11px;color:var(--mu);margin-top:6px;line-height:1.4}
-.ln{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--bd)}
-.ln-n{flex:1;min-width:0}.ln-n b{display:block;font-size:15px}
-.ln-s{font-size:12px;color:var(--mu);margin-top:2px}
-.ln-t{font-weight:700;min-width:64px;text-align:right}
-.stp{display:flex;align-items:center;gap:8px}
-.stp button{width:34px;height:34px;border:0;border-radius:50%;background:#e8efeb;font-size:20px;font-weight:700}
-.stp b{min-width:22px;text-align:center}
-.x{border:0;background:none;color:var(--red);font-size:20px;padding:4px 8px}
-.tot{display:flex;justify-content:space-between;font-size:22px;font-weight:800;color:var(--g);padding:12px 0 4px}
-.chg{font-size:20px;font-weight:800;margin-top:10px;text-align:center;padding:10px;border-radius:10px;background:#eef8f2;color:var(--g)}
-.chg.bad{background:#fdecea;color:var(--red)}
-#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#1a2420;color:#fff;padding:12px 18px;border-radius:12px;font-size:14px;z-index:30;display:none;max-width:90%;text-align:center}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header>
-  <svg width="38" height="38" viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#fff"/><path d="M14 26h36l-4 22a4 4 0 0 1-4 3H22a4 4 0 0 1-4-3z" fill="#1b7f4b"/><path d="M22 26l8-12M42 26l-8-12" stroke="#e0a100" stroke-width="4" stroke-linecap="round"/><circle cx="26" cy="38" r="3" fill="#fff"/><circle cx="38" cy="38" r="3" fill="#fff"/></svg>
-  <div><h1>FreshMart Stock</h1><small>Speak it. It stocks and sells.</small></div>
+  <div class="logo" id="hLogo"></div>
+  <div class="ht"><h1 id="hName">FreshMart</h1><small>Stock &amp; sales</small></div>
+  <button class="gear" onclick="openSettings()" aria-label="Settings">⚙</button>
 </header>
 
-<div class="stats">
-  <div class="stat"><b id="sItems">0</b><span>Products</span></div>
-  <div class="stat p"><b id="sToday">K0</b><span>Sold today</span></div>
-  <div class="stat"><b id="sValue">K0</b><span>Potential sales (stock)</span></div>
-  <div class="stat p"><b id="sProfit">K0</b><span>Projected profit</span></div>
-</div>
+<main>
+  <section class="sum">
+    <div class="hero" onclick="openSales()">
+      <div><span>Sold today</span><b id="sToday">K0</b></div>
+      <small id="sCount">0 sales<br>tap to view</small>
+    </div>
+    <div class="mini"><b id="sItems">0</b><span>Products</span></div>
+    <div class="mini"><b id="sValue">K0</b><span>Stock worth</span></div>
+    <div class="mini"><b id="sProfit">K0</b><span>Profit if sold</span></div>
+  </section>
 
-<div class="cmd">
-  <div class="tabs">
-    <button class="tab on" id="tStock" onclick="setMode('stock')">📦 Stock in</button>
-    <button class="tab" id="tSell" onclick="setMode('sell')">🛒 Sell</button>
-  </div>
-  <div class="qa-r">
-    <input id="qa" autocomplete="off" onkeydown="if(event.key==='Enter')runCmd()">
-    <button class="mic" onclick="mic()">🎤</button>
-    <button class="go" onclick="runCmd()">Go</button>
-  </div>
-  <div class="qa-t" id="hint"></div>
-</div>
+  <section class="cmd">
+    <div class="tabs">
+      <button class="tab on" id="tStock" onclick="setMode('stock')">📦 Stock in</button>
+      <button class="tab" id="tSell" onclick="setMode('sell')">🛒 Sell</button>
+    </div>
+    <div class="qa-r">
+      <input id="qa" autocomplete="off" onkeydown="if(event.key==='Enter')runCmd()">
+      <button class="mic" onclick="mic()" aria-label="Speak">🎤</button>
+      <button class="go" onclick="runCmd()">Go</button>
+    </div>
+    <button class="hint-b" onclick="toggleHint()">How do I speak it? ▾</button>
+    <div class="qa-t" id="hint" style="display:none"></div>
+  </section>
 
-<div class="search"><input id="q" placeholder="Search products…" oninput="render()"></div>
-<div id="list"></div>
+  <div class="tools">
+    <div class="chips">
+      <button class="chip on" id="cAll" onclick="setFilter('all')">All</button>
+      <button class="chip" id="cLow" onclick="setFilter('low')">Low</button>
+      <button class="chip" id="cOut" onclick="setFilter('out')">Out</button>
+    </div>
+    <input id="q" placeholder="Search products…" oninput="render()">
+  </div>
+  <div id="list"></div>
+</main>
+
 <button class="fab" onclick="openForm()">+ Add product</button>
 <div id="toast"></div>
 
@@ -106,16 +58,15 @@ label{font-size:12px;color:var(--mu);display:block;margin:10px 0 4px}
 <div class="sheet" id="sheet" onclick="if(event.target===this)closeForm()">
   <div class="panel">
     <h2 id="fTitle">New product</h2>
-    <label>Product photo (tap to take or choose)</label>
+    <label>Product photo (optional)</label>
     <div class="photo">
       <div class="thumb" id="fThumb" onclick="document.getElementById('file').click()">?</div>
       <div style="flex:1">
         <button class="btn s" onclick="document.getElementById('file').click()">📷 Capture photo</button>
-        <div style="font-size:11px;color:var(--mu);margin-top:6px">No photo? A logo badge is made automatically from the name.</div>
+        <div class="muted" style="margin-top:6px">No photo? A coloured badge is made from the name.</div>
       </div>
     </div>
     <input type="file" id="file" accept="image/*" capture="environment" hidden onchange="photo(this)">
-
     <label>Product name</label>
     <input id="fName" placeholder="e.g. Rice 5kg" oninput="calc();preview()">
     <div class="row">
@@ -124,16 +75,15 @@ label{font-size:12px;color:var(--mu);display:block;margin:10px 0 4px}
       <div><label>Unit</label><input id="fUnit" value="pcs" placeholder="pcs, kg, pack"></div>
     </div>
     <div class="row">
-      <div><label>Cost price (K)</label><input id="fCost" type="number" inputmode="decimal" step="0.01" oninput="fromMarkup()"></div>
+      <div><label>Cost price</label><input id="fCost" type="number" inputmode="decimal" step="0.01" oninput="fromMarkup()"></div>
       <div><label>Markup (%)</label><input id="fMark" type="number" inputmode="decimal" step="0.1" value="25" oninput="fromMarkup()"></div>
     </div>
-    <label>Selling price (K) — auto, or type your own</label>
+    <label>Selling price — auto, or type your own</label>
     <input id="fSell" type="number" inputmode="decimal" step="0.01" oninput="fromSell()">
     <div class="row">
-      <div><label>Quantity in stock</label><input id="fQty" type="number" inputmode="numeric" oninput="calc()"></div>
+      <div><label>Quantity in stock</label><input id="fQty" type="number" inputmode="decimal" oninput="calc()"></div>
       <div><label>Low-stock alert at</label><input id="fLow" type="number" inputmode="numeric" value="5"></div>
     </div>
-
     <div class="calc" id="calc"></div>
     <div class="acts">
       <button class="btn d" id="fDel" style="display:none" onclick="del()">Delete</button>
@@ -143,318 +93,20 @@ label{font-size:12px;color:var(--mu);display:block;margin:10px 0 4px}
   </div>
 </div>
 
-<div class="sheet" id="rsheet" onclick="if(event.target===this)this.classList.remove('on')">
+<div class="sheet" id="rsheet" onclick="if(event.target===this)closeRec()">
   <div class="panel">
     <h2 id="rTitle">Receive stock</h2>
     <label>Quantity arriving</label>
-    <input id="rQty" type="number" inputmode="numeric">
-    <label>New cost price (K) — leave as is if unchanged</label>
+    <input id="rQty" type="number" inputmode="decimal">
+    <label>Cost price — leave as is if unchanged</label>
     <input id="rCost" type="number" inputmode="decimal" step="0.01">
     <div class="acts">
-      <button class="btn s" onclick="document.getElementById('rsheet').classList.remove('on')">Cancel</button>
+      <button class="btn s" onclick="closeRec()">Cancel</button>
       <button class="btn p" onclick="receive()">Add to stock</button>
     </div>
   </div>
-</div><script>
-const K='freshmart.products.v1',KS='freshmart.sales.v1';
-function load(k){try{return JSON.parse(localStorage.getItem(k)||'[]')}catch(e){return []}}
-let P=load(K),S=load(KS);
-let editId=null,img=null,recId=null,mode='stock',cart=[],miss=[],sl=[],givenVal='';
-const $=id=>document.getElementById(id);
-const M=n=>'K'+(Math.round((+n||0)*100)/100).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:2});
-const rnd=n=>Math.round(n*100)/100;
-function put(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){alert('Storage full — photos are too big. Delete some items.')}}
-const store=()=>put(K,P);
-function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
-function toast(t){const e=$('toast');e.textContent=t;e.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display='none',3500)}
-function hue(s){let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))%360;return h}
-function badge(name,im){if(im)return `<img src="${im}">`;return (name||'?').trim().charAt(0).toUpperCase()||'?'}
-function bg(name){return `background:hsl(${hue(name||'?')},55%,42%)`}
+</div>
 
-/* ================= LIST ================= */
-function render(){
-  const q=$('q').value.toLowerCase();
-  const L=P.filter(p=>p.name.toLowerCase().includes(q));
-  $('list').innerHTML=L.length?L.map(p=>{
-    const low=p.qty<=p.low;
-    return `<div class="item"><div class="thumb" style="${p.img?'':bg(p.name)}" onclick="openForm('${p.id}')">${badge(p.name,p.img)}</div>
-    <div class="info" onclick="openForm('${p.id}')"><h3>${esc(p.name)}</h3>
-    <div class="m">Cost ${M(p.cost)} → Sell ${M(p.sell)}${p.sell<=0?' · <span class="red">⚠ set price</span>':''}</div>
-    <div class="pp">Profit/unit ${M(p.sell-p.cost)} · If all sold ${M((p.sell-p.cost)*p.qty)}</div></div>
-    <div class="qty ${low?'low':''}" onclick="openRec('${p.id}')"><b>${p.qty}</b><span>${low?'LOW · ':''}${esc(p.unit)} · +stock</span></div>
-    <button class="sellb" onclick="sellOne('${p.id}')">Sell</button></div>`}).join(''):
-    `<div class="empty">${P.length?'No match.':'No products yet.<br>Use <b>Stock in</b> above and say what you have,<br>e.g. “bread 20 cost 12 selling 15”.'}</div>`;
-  const d0=new Date();d0.setHours(0,0,0,0);
-  $('sItems').textContent=P.length;
-  $('sToday').textContent=M(S.filter(s=>s.t>=d0.getTime()).reduce((a,s)=>a+s.total,0));
-  $('sValue').textContent=M(P.reduce((a,p)=>a+p.sell*p.qty,0));
-  $('sProfit').textContent=M(P.reduce((a,p)=>a+(p.sell-p.cost)*p.qty,0));
-}
-
-/* ================= SPEECH → ITEMS ================= */
-//PARSE_START
-const NW={zero:0,one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,ten:10,eleven:11,twelve:12,thirteen:13,fourteen:14,fifteen:15,sixteen:16,seventeen:17,eighteen:18,nineteen:19,twenty:20,thirty:30,forty:40,fifty:50,sixty:60,seventy:70,eighty:80,ninety:90,dozen:12,half:0.5};
-const TENS='twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety',ONES='one|two|three|four|five|six|seven|eight|nine';
-const LEAD=/^(?:i\s+)?(?:have\s+|just\s+)?(?:sold|sell|sale|add|stock|received|bought|buying|got|new|products?)\b\s*/;
-const key=s=>(s||'').toLowerCase().replace(/[^a-z0-9]/g,'');
-function norm(t){
-  t=(t||'').toLowerCase();
-  t=t.replace(new RegExp('\\b('+TENS+')[\\s-]+('+ONES+')\\b','g'),(m,a,b)=>NW[a]+NW[b]);
-  t=t.replace(new RegExp('\\b('+Object.keys(NW).join('|')+')\\b','g'),m=>NW[m]);
-  t=t.replace(/\b(\d+)\s+hundred\b/g,(m,n)=>n*100).replace(/\bhundred\b/g,'100');
-  t=t.replace(/\bk(?=\d)/g,'').replace(/\b(kwacha|zmw|please|um|uh)\b/g,' ');
-  t=t.replace(/cost price/g,'cost').replace(/(selling|sell|sale)\s+price/g,'selling').replace(/mark\s*up/g,'markup').replace(/\b(percent|per cent)\b|%/g,' ');
-  return t.replace(/\s+/g,' ').trim();
-}
-function splitItems(t){
-  return t.split(/\s*(?:,|;|\.\s|\b(?:then|next|also|plus)\b|\band\b(?!\s+(?:cost|selling|sell|price|markup|quantity|qty|stock)\b))\s*/).map(s=>s.trim()).filter(Boolean);
-}
-function parseSeg(s){
-  s=s.replace(LEAD,' ').trim();
-  const num='(\\d+(?:\\.\\d+)?)';
-  const take=re=>{const m=s.match(re);if(!m)return null;s=s.replace(m[0],' ');return parseFloat(m[1])};
-  const cost=take(new RegExp('\\b(?:cost|costs|bought|buying)\\b\\D{0,10}?'+num));
-  const sell=take(new RegExp('\\b(?:selling|sell|sells|price)\\b\\D{0,10}?'+num));
-  const mark=take(new RegExp('\\bmarkup\\b\\D{0,10}?'+num));
-  let qty=take(new RegExp('\\b(?:quantity|qty|stock|received)\\b\\D{0,10}?'+num));
-  let size='';
-  const sm=s.match(/(\d+(?:\.\d+)?)\s*(kg|g|ml|l|litres?|liters?|lb)\b/);
-  if(sm){size=sm[1]+sm[2].replace(/^lit.*/,'l');s=s.replace(sm[0],' ')}
-  const nm=s.match(/\b\d+(?:\.\d+)?\b/);
-  if(nm){if(qty===null)qty=parseFloat(nm[0]);s=s.replace(nm[0],' ')}
-  s=s.replace(/\b(loaf|loaves|pack|packs|packet|packets|bottle|bottles|bag|bags|piece|pieces|pcs|tin|tins|can|cans|unit|units|of|the|a|an)\b/g,' ');
-  let name=s.replace(/[^a-z\s'-]/g,' ').replace(/\s+/g,' ').trim();
-  if(!name)return null;
-  name=name.replace(/\b[a-z]/g,c=>c.toUpperCase())+(size?' '+size:'');
-  return {name,qty,cost,sell,mark};
-}
-function parseAll(text){return splitItems(norm(text)).map(parseSeg).filter(Boolean)}
-function findProduct(name){
-  const k=key(name);if(k.length<2)return null;
-  const alts=[k,k.replace(/(es|s)$/,'')].filter(x=>x.length>=2);
-  let best=null,bs=0;
-  for(const p of P){
-    const pk=key(p.name);if(pk.length<2)continue;let sc=0;
-    for(const a of alts){
-      if(pk===a)sc=Math.max(sc,4);
-      else if(pk.startsWith(a)||a.startsWith(pk))sc=Math.max(sc,3);
-      else if(a.length>=3&&(pk.includes(a)||a.includes(pk)))sc=Math.max(sc,2);
-    }
-    if(sc>bs){bs=sc;best=p}
-  }
-  return best;
-}
-//PARSE_END
-
-/* ================= COMMAND BAR ================= */
-const HINTS={
- stock:'Say what came in, e.g. <i>“bread 20 cost 12 selling 15, sugar 1 kg 10 cost 30 selling 38”</i>. New items are created; items you already have just get more stock. Tap the 🎤 on your keyboard to speak.',
- sell:'Say what was sold, e.g. <i>“sold 2 bread and 1 sugar”</i>. You will see the total, enter what the customer gave, and get the change. Tap the 🎤 on your keyboard to speak.'
-};
-const PH={stock:'bread 20 cost 12 selling 15',sell:'sold 2 bread and 1 sugar'};
-function setMode(m){
-  mode=m;$('tStock').classList.toggle('on',m==='stock');$('tSell').classList.toggle('on',m==='sell');
-  $('hint').innerHTML=HINTS[m];$('qa').placeholder=PH[m];
-}
-function runCmd(){
-  const txt=$('qa').value.trim();
-  if(!txt)return alert(mode==='sell'?'Say or type what was sold, e.g. sold 2 bread and 1 sugar':'Say or type what came in, e.g. bread 20 cost 12 selling 15');
-  const items=parseAll(txt);
-  if(!items.length)return alert('I could not understand: "'+txt+'"');
-  const asSell=mode==='sell'||/^\s*(i\s+)?(just\s+)?(sold|sell)\b/i.test(txt);
-  $('qa').value='';
-  if(asSell)startSale(items);else startStock(items);
-}
-function mic(){
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){$('qa').focus();return alert('Tap the microphone on your keyboard, speak, then tap Go.')}
-  try{
-    const r=new SR();r.lang='en-US';r.interimResults=false;
-    r.onresult=e=>{$('qa').value=e.results[0][0].transcript;runCmd()};
-    r.onerror=()=>{$('qa').focus();alert('Mic not available here. Tap the microphone on your keyboard, speak, then tap Go.')};
-    r.start();
-  }catch(e){$('qa').focus();alert('Tap the microphone on your keyboard, speak, then tap Go.')}
-}
-function closeV(){$('vsheet').classList.remove('on');cart=[];miss=[];sl=[]}
-
-/* ================= STOCK IN ================= */
-function prices(it){
-  let c=it.cost,s=it.sell;
-  if(it.p){
-    c=c!==null?c:it.p.cost;
-    if(s===null){
-      if(it.mark!==null&&c>0)s=rnd(c*(1+it.mark/100));
-      else if(c!==it.p.cost&&it.p.cost>0)s=rnd(c*it.p.sell/it.p.cost);
-      else s=it.p.sell;
-    }
-  }else{
-    c=c!==null?c:0;
-    if(s===null)s=c>0?rnd(c*(1+(it.mark!==null?it.mark:25)/100)):0;
-  }
-  return {c,s};
-}
-function startStock(items){
-  sl=items.map(it=>{
-    const p=findProduct(it.name);
-    let qty=it.qty;
-    if(qty===null)qty=(p&&(it.cost!==null||it.sell!==null||it.mark!==null))?0:1;
-    return {...it,p,qty};
-  });
-  renderStock();$('vsheet').classList.add('on');
-}
-function renderStock(){
-  if(!sl.length)return closeV();
-  const rows=sl.map((it,i)=>{
-    const {c,s}=prices(it);
-    const warn=s<=0?' <span class="red">⚠ price needed</span>':'';
-    const head=it.p?`🔄 <b>${esc(it.p.name)}</b>`:`🆕 <b>${esc(it.name)}</b>`;
-    const sub=it.p?`stock ${it.p.qty} → <b>${it.p.qty+it.qty}</b> (+${it.qty})`:`new · quantity ${it.qty}`;
-    return `<div class="ln"><div class="ln-n">${head}<div class="ln-s">${sub}</div><div class="ln-s">Cost ${M(c)} · Sell ${M(s)}${warn}</div></div><button class="x" onclick="rmStock(${i})">✕</button></div>`;
-  }).join('');
-  $('vpanel').innerHTML=`<h2>📦 Add to stock</h2><div class="ln-s">Check this, then confirm.</div>${rows}
-  <div class="acts"><button class="btn s" onclick="closeV()">Cancel</button><button class="btn p" onclick="confirmStock()">Confirm</button></div>`;
-}
-function rmStock(i){sl.splice(i,1);renderStock()}
-function confirmStock(){
-  let upd=0,made=0;
-  sl.forEach((it,i)=>{
-    const {c,s}=prices(it);
-    const p=it.p||P.find(x=>key(x.name)===key(it.name));
-    if(p){p.qty+=it.qty;p.cost=c;p.sell=s;upd++}
-    else{P.unshift({id:'p'+Date.now()+'_'+i,name:it.name,cat:'Other',unit:'pcs',cost:c,sell:s,qty:it.qty,low:5,img:null});made++}
-  });
-  store();closeV();render();
-  toast('Saved: '+made+' new, '+upd+' updated');
-}
-
-/* ================= SELL ================= */
-function addCart(id,q){const c=cart.find(x=>x.id===id);if(c)c.qty+=q;else cart.push({id,qty:q})}
-function sellOne(id){miss=[];givenVal='';addCart(id,1);openSale()}
-function startSale(items){
-  cart=[];miss=[];givenVal='';
-  for(const it of items){
-    const p=findProduct(it.name);const q=it.qty===null?1:it.qty;
-    if(!p){miss.push(it.name);continue}
-    addCart(p.id,q);
-  }
-  if(!cart.length)return alert('Not found in your stock: '+miss.join(', ')+'\nAdd it first using Stock in.');
-  openSale();
-}
-function openSale(){renderSale();$('vsheet').classList.add('on')}
-function saleTotal(){return cart.reduce((a,c)=>{const p=P.find(x=>x.id===c.id);return a+p.sell*c.qty},0)}
-function renderSale(){
-  if(!cart.length)return closeV();
-  const rows=cart.map((c,i)=>{
-    const p=P.find(x=>x.id===c.id);
-    const w=(c.qty>p.qty?` · <span class="red">only ${p.qty} in stock</span>`:'')+(p.sell<=0?' · <span class="red">no price set</span>':'');
-    return `<div class="ln"><div class="ln-n"><b>${esc(p.name)}</b><div class="ln-s">${M(p.sell)} each${w}</div></div>
-    <div class="stp"><button onclick="cq(${i},-1)">−</button><b>${c.qty}</b><button onclick="cq(${i},1)">+</button></div>
-    <div class="ln-t">${M(p.sell*c.qty)}</div></div>`;
-  }).join('');
-  const m=miss.length?`<div class="ln-s red" style="margin-top:8px">Not found, skipped: ${esc(miss.join(', '))}</div>`:'';
-  $('vpanel').innerHTML=`<h2>🛒 Sale</h2>${rows}${m}
-  <div class="tot"><span>Total</span><span>${M(saleTotal())}</span></div>
-  <label>Amount given by customer (K)</label>
-  <input id="given" type="number" inputmode="decimal" step="0.01" value="${esc(givenVal)}" oninput="upd()">
-  <div class="chg" id="chg"></div>
-  <div class="acts"><button class="btn s" onclick="closeV()">Cancel</button><button class="btn p" onclick="confirmSale()">Confirm sale</button></div>`;
-  upd();
-}
-function cq(i,d){cart[i].qty+=d;if(cart[i].qty<=0)cart.splice(i,1);renderSale()}
-function upd(){
-  const e=$('given');if(!e)return;givenVal=e.value;
-  const g=+givenVal,t=saleTotal(),c=$('chg');
-  if(!givenVal){c.className='chg';c.textContent='Enter what the customer gave to see the change';c.style.fontSize='13px';return}
-  c.style.fontSize='';
-  if(g>=t){c.className='chg';c.textContent='Change: '+M(g-t)}
-  else{c.className='chg bad';c.textContent='Short by '+M(t-g)}
-}
-function confirmSale(){
-  if(!cart.length)return;
-  const total=saleTotal(),g=+givenVal||0;
-  if(g>0&&g<total&&!confirm('Customer gave less than the total. Save the sale anyway?'))return;
-  const lines=cart.map(c=>{const p=P.find(x=>x.id===c.id);return {id:p.id,name:p.name,qty:c.qty,price:p.sell,cost:p.cost}});
-  cart.forEach(c=>{const p=P.find(x=>x.id===c.id);p.qty=Math.max(0,rnd(p.qty-c.qty))});
-  S.push({t:Date.now(),total,given:g,change:g?rnd(g-total):0,lines});
-  store();put(KS,S);
-  const ch=g?' · Change '+M(g-total):'';
-  closeV();render();toast('Sale saved · Total '+M(total)+ch);
-}
-
-/* ================= MANUAL FORM ================= */
-function preview(){const n=$('fName').value;$('fThumb').innerHTML=badge(n,img);$('fThumb').style.cssText=img?'':bg(n)}
-function photo(inp){
-  const f=inp.files[0];if(!f)return;
-  const r=new FileReader();
-  r.onload=e=>{const i=new Image();i.onload=()=>{
-    const s=320,c=document.createElement('canvas'),k=Math.min(1,s/Math.max(i.width,i.height));
-    c.width=i.width*k;c.height=i.height*k;c.getContext('2d').drawImage(i,0,0,c.width,c.height);
-    img=c.toDataURL('image/jpeg',.7);preview()};i.src=e.target.result};
-  r.readAsDataURL(f);inp.value='';
-}
-function fromMarkup(){
-  const c=+$('fCost').value,m=+$('fMark').value;
-  if(c>0)$('fSell').value=rnd(c*(1+m/100));calc();
-}
-function fromSell(){
-  const c=+$('fCost').value,s=+$('fSell').value;
-  if(c>0&&s>0)$('fMark').value=Math.round((s/c-1)*1000)/10;calc();
-}
-function calc(){
-  const c=+$('fCost').value||0,s=+$('fSell').value||0,q=+$('fQty').value||0;
-  $('calc').innerHTML=`<div><span>Money spent on stock</span><b>${M(c*q)}</b></div>
-  <div><span>Profit per unit</span><b>${M(s-c)}</b></div>
-  <div><span>Potential sales (all sold)</span><b>${M(s*q)}</b></div>
-  <div class="big"><span>Projected profit</span><span>${M((s-c)*q)}</span></div>`;
-}
-function openForm(id){
-  editId=id||null;const p=P.find(x=>x.id===id);
-  img=p?p.img:null;
-  $('fTitle').textContent=p?'Edit product':'New product';
-  $('fName').value=p?p.name:'';$('fCat').value=p?p.cat:'Staples';$('fUnit').value=p?p.unit:'pcs';
-  $('fCost').value=p?p.cost:'';$('fSell').value=p?p.sell:'';$('fQty').value=p?p.qty:'';$('fLow').value=p?p.low:5;
-  $('fMark').value=p&&p.cost>0?Math.round((p.sell/p.cost-1)*1000)/10:25;
-  $('fDel').style.display=p?'block':'none';
-  preview();calc();$('sheet').classList.add('on');
-}
-function closeForm(){$('sheet').classList.remove('on')}
-function save(){
-  const name=$('fName').value.trim(),cost=+$('fCost').value,sell=+$('fSell').value;
-  if(!name)return alert('Enter the product name.');
-  if(!(cost>0))return alert('Enter the cost price.');
-  if(!(sell>0))return alert('Enter a selling price or markup.');
-  const o={name,cat:$('fCat').value,unit:$('fUnit').value||'pcs',cost,sell,qty:+$('fQty').value||0,low:+$('fLow').value||0,img};
-  if(editId){Object.assign(P.find(x=>x.id===editId),o)}else{P.unshift({id:'p'+Date.now(),...o})}
-  store();closeForm();render();
-}
-function del(){if(confirm('Delete this product?')){P=P.filter(x=>x.id!==editId);store();closeForm();render()}}
-function openRec(id){recId=id;const p=P.find(x=>x.id===id);$('rTitle').textContent='Receive stock: '+p.name;$('rQty').value='';$('rCost').value=p.cost;$('rsheet').classList.add('on')}
-function receive(){
-  const p=P.find(x=>x.id===recId),q=+$('rQty').value,c=+$('rCost').value;
-  if(!(q>0))return alert('Enter the quantity.');
-  if(c>0&&c!==p.cost){const m=p.cost>0?p.sell/p.cost:1.25;p.cost=c;p.sell=rnd(c*m)}
-  p.qty+=q;store();$('rsheet').classList.remove('on');render();
-}
-
-setMode('stock');
-render();
-</script><script>
-async function mic(){
-  const qa=document.getElementById('qa');
-  const fb=m=>{qa.focus();toast(m||'Tap the 🎤 on your keyboard, speak, then tap Go')};
-  const SR=window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.SpeechRecognition;
-  if(!SR)return fb();
-  try{
-    const a=await SR.available();
-    if(!a.available)return fb('Speech service not found on this phone. Use the keyboard 🎤.');
-    let p=await SR.checkPermissions();
-    if(p.speechRecognition!=='granted')p=await SR.requestPermissions();
-    if(p.speechRecognition!=='granted')return fb('Microphone is blocked. Allow it in phone Settings > Apps > FreshMart > Permissions.');
-    const r=await SR.start({language:'en-US',maxResults:1,prompt:'Say it now',partialResults:false,popup:true});
-    const t=r&&r.matches&&r.matches[0];
-    if(t){qa.value=t;runCmd()}
-  }catch(e){fb()}
-}
-</script>
+<script src="app.js"></script>
 </body>
 </html>
