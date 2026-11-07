@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- handle -->
+  <path d="M232 322 H318 L386 612" fill="none" stroke="#14663a" stroke-width="36" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- baguette -->
+  <g transform="rotate(-20 418 440)">
+    <rect x="372" y="206" width="94" height="350" rx="47" fill="#f2b24b"/>
+    <g stroke="#b86f1c" stroke-width="12" stroke-linecap="round" opacity=".85">
+      <path d="M384 276 l70 20"/><path d="M382 342 l74 20"/><path d="M382 408 l74 20"/>
+    </g>
+  </g>
+  <!-- milk -->
+  <path d="M548 300 L602 246 L656 300 Z" fill="#dfe8ee"/>
+  <rect x="548" y="300" width="108" height="200" rx="8" fill="#fff"/>
+  <rect x="548" y="366" width="108" height="58" fill="#3b82c4"/>
+  <!-- leafy greens -->
+  <g>
+    <circle cx="680" cy="410" r="50" fill="#2f9e44"/>
+    <circle cx="742" cy="396" r="56" fill="#51c25a"/>
+    <circle cx="710" cy="354" r="50" fill="#7ed957"/>
+    <g stroke="#1f7a33" stroke-width="7" stroke-linecap="round" fill="none" opacity=".7">
+      <path d="M710 404 V338"/><path d="M710 380 l-24 -20"/><path d="M710 380 l24 -20"/>
+    </g>
+  </g>
+  <!-- tomato -->
+  <circle cx="494" cy="404" r="48" fill="#ef4f35"/>
+  <path d="M494 358 c-16 -6 -28 -2 -36 10 c15 2 26 0 36 -10 z M494 358 c16 -6 28 -2 36 10 c-15 2 -26 0 -36 -10 z" fill="#2e9b52"/>
+  <!-- trolley basket (front) -->
+  <path d="M332 426 H794 L740 630 Q734 652 712 652 H420 Q398 652 392 630 Z" fill="#14663a"/>
+  <g stroke="#0d4a29" stroke-width="12" stroke-linecap="round" opacity="0.55">
+    <path d="M358 492 H770"/><path d="M376 558 H752"/>
+    <path d="M470 440 V638"/><path d="M566 440 V638"/><path d="M662 440 V638"/>
+  </g>
+  <path d="M394 712 H716" stroke="#14663a" stroke-width="34" stroke-linecap="round"/>
+  <path d="M410 652 L420 712 M704 652 L694 712" stroke="#14663a" stroke-width="22" stroke-linecap="round"/>
+  <circle cx="454" cy="792" r="38" fill="#14663a"/><circle cx="454" cy="792" r="14" fill="#c5ee6a"/>
+  <circle cx="662" cy="792" r="38" fill="#14663a"/><circle cx="662" cy="792" r="14" fill="#c5ee6a"/>
+</svg>
