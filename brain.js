@@ -318,4 +318,9 @@ window.render=function(){
   _r();
 };
 render();
+})();/* v4.4: keep the title clear of the phone status bar */
+(function(){
+const s=document.createElement('style');
+s.textContent='header{padding-top:calc(12px + max(env(safe-area-inset-top,0px),28px))!important}.panel{padding-bottom:max(22px,calc(env(safe-area-inset-bottom,0px) + 12px))!important}#ptr{top:92px!important}';
+document.head.appendChild(s);
 })();
