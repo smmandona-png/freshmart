@@ -323,4 +323,81 @@ render();
 const s=document.createElement('style');
 s.textContent='header{padding-top:calc(12px + max(env(safe-area-inset-top,0px),28px))!important}.panel{padding-bottom:max(22px,calc(env(safe-area-inset-bottom,0px) + 12px))!important}#ptr{top:92px!important}';
 document.head.appendChild(s);
+})();/* v5: licence (rental) with trial, grace period and read-only mode */
+(function(){
+const PUB={"crv":"P-256","ext":true,"key_ops":["verify"],"kty":"EC","x":"GxsPgiVyj1QHTx8LZXin2q235sz5y5Y7Y8bmutCLUZA","y":"vwrV5iXntnjvlMeo7xFBwcXZ2tihKoWRw_oYxfZwXUE"};
+const TRIAL=14,GRACE=5,WARN=7,DAY=864e5,KL='freshmart.license.v1';
+let L=load(KL,{});
+const now=()=>Date.now();
+const save=()=>put(KL,L);
+if(!L.first){L.first=now()}
+L.seen=Math.max(L.seen||0,now());save();
+const eff=()=>Math.max(now(),L.seen||0);
+const b2u=s=>Uint8Array.from(atob(s.replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0));
+async function check(code){
+  const p=String(code||'').replace(/\s+/g,'').split('.');
+  if(p.length!==2)throw new Error('bad');
+  const k=await crypto.subtle.importKey('jwk',PUB,{name:'ECDSA',namedCurve:'P-256'},false,['verify']);
+  const ok=await crypto.subtle.verify({name:'ECDSA',hash:'SHA-256'},k,b2u(p[1]),b2u(p[0]));
+  if(!ok)throw new Error('bad');
+  const t=new TextDecoder().decode(b2u(p[0])).split('|');
+  if(t.length!==2||!/^\d{4}-\d{2}-\d{2}$/.test(t[1]))throw new Error('bad');
+  return {shop:t[0],until:t[1]};
+}
+const endOf=u=>new Date(u+'T23:59:59').getTime();
+const same=(a,b)=>String(a).trim().toLowerCase()===String(b).trim().toLowerCase();
+function state(){
+  const e=eff();
+  if(L.code&&L.until&&same(L.shop,CFG.name)){
+    const end=endOf(L.until),left=Math.ceil((end-e)/DAY);
+    if(e<=end)return {k:'active',left,until:L.until};
+    const g=Math.ceil((end+GRACE*DAY-e)/DAY);
+    if(g>0)return {k:'grace',left:g,until:L.until};
+    return {k:'expired',until:L.until};
+  }
+  const end=L.first+TRIAL*DAY,left=Math.ceil((end-e)/DAY);
+  return e<=end?{k:'trial',left}:{k:'expired'};
+}
+const can=()=>state().k!=='expired';
+function banner(){
+  let b=document.getElementById('licb');
+  if(!b){b=document.createElement('div');b.id='licb';b.onclick=()=>LIC.show();b.style.cssText='padding:8px 14px;font-size:13px;font-weight:600;text-align:center;display:none;cursor:pointer';document.querySelector('header').after(b)}  const s=state();let t='',bg='',c='#17211c';
+  if(s.k==='trial'){t='Free trial: '+s.left+(s.left===1?' day':' days')+' left. Tap to enter your licence code.';bg='#e3f1ff'}
+  else if(s.k==='active'&&s.left<=WARN){t='Renewal due in '+s.left+(s.left===1?' day':' days')+' ('+s.until+'). Tap to renew.';bg='#fff4d6'}
+  else if(s.k==='grace'){t='Licence ended. '+s.left+(s.left===1?' day':' days')+' left to renew before the app becomes read-only.';bg='#fde7c8'}
+  else if(s.k==='expired'){t='Read-only: licence ended. Tap to renew. Your data is safe.';bg='#fdecea';c='#c0392b'}
+  b.style.display=t?'block':'none';b.textContent=t;b.style.background=bg;b.style.color=c;
+}
+function info(){
+  const s=state();
+  if(s.k==='trial')return 'Free trial: <b>'+s.left+'</b> days left';
+  if(s.k==='active')return 'Active until <b>'+s.until+'</b> ('+s.left+' days left)';
+  if(s.k==='grace')return 'Ended on <b>'+s.until+'</b>. Grace period: <b>'+s.left+'</b> days left';
+  return 'Licence ended'+(s.until?' on <b>'+s.until+'</b>':'')+'. The app is <b>read-only</b>. Your data is safe.';
+}
+const block=()=>'<label>Licence</label><div class="muted" style="font-size:13px;color:var(--tx)">Shop name: <b>'+esc(CFG.name)+'</b><br>'+info()+'</div><label>Licence code (paste what you were sent)</label><textarea id="lcCode" rows="3" placeholder="Paste code here"></textarea><button class="btn p" style="margin-top:8px" onclick="LIC.activate()">Activate code</button>';
+function show(){
+  $('vpanel').innerHTML='<h2>Licence</h2>'+block().replace('<label>Licence</label>','')+'<div class="acts"><button class="btn s" onclick="closeV()">Close</button></div>';
+  $('vsheet').classList.add('on');
+}
+async function activate(){
+  const raw=($('lcCode')||{}).value||'';
+  let r;try{r=await check(raw)}catch(e){return alert('That code is not valid. Check that you pasted all of it, with nothing added.')}
+  if(!same(r.shop,CFG.name))return alert('This code is for "'+r.shop+'". Your shop name in Settings is "'+CFG.name+'". Make them match exactly, then try again.');
+  if(L.until&&L.until>r.until&&same(L.shop,r.shop))return alert('You already have a later paid date ('+L.until+'). This code is older.');
+  L.code=raw.replace(/\s+/g,'');L.shop=r.shop;L.until=r.until;save();
+  banner();render();alert('Activated. Paid until '+r.until+'. Thank you!');show();
+}
+['runCmd','mic','sellOne','openForm','openRec'].forEach(n=>{const o=window[n];window[n]=function(){if(!can()){show();return}return o.apply(this,arguments)}});
+const _os=window.openSettings;
+window.openSettings=function(){
+  _os();
+  $('vpanel').innerHTML=$('vpanel').innerHTML.replace('<div class="hr">',block()+'<div class="hr">');
+};
+const _r=window.render;
+window.render=function(){_r();try{banner()}catch(e){}};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){L.seen=Math.max(L.seen||0,now());save();banner()}});
+if(L.code)check(L.code).then(r=>{if(r.until!==L.until||!same(r.shop,L.shop)){L.until=r.until;L.shop=r.shop;save()}banner();render()},()=>{delete L.code;delete L.until;delete L.shop;save();banner();render()});
+window.LIC={activate,show,state};
+banner();
 })();
