@@ -310,4 +310,12 @@ window.addEventListener('popstate',()=>{
   if(skip){skip=false;return}
   if(pushed){pushed=false;closeV();closeForm();closeRec()}
 });
+})();/* v4.3: inventory always in A-Z order */
+(function(){
+const _r=window.render;
+window.render=function(){
+  P.sort((a,b)=>String(a.name).localeCompare(String(b.name),undefined,{sensitivity:'base',numeric:true}));
+  _r();
+};
+render();
 })();
