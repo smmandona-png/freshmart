@@ -32,11 +32,21 @@ jobs:
           node make-icons.js
       - name: Use fixed signing key
         run: |
+          base64 -d debug.keystore.b64 > android/app/fixed.keystore
           mkdir -p ~/.android
-          base64 -d debug.keystore.b64 > ~/.android/debug.keystore
+          cp android/app/fixed.keystore ~/.android/debug.keystore
+          sed -i '0,/^android {/s//android {\n    signingConfigs {\n        debug {\n            storeFile file("fixed.keystore")\n            storePassword "android"\n            keyAlias "androiddebugkey"\n            keyPassword "android"\n        }\n    }/' android/app/build.gradle
+          grep -q signingConfigs android/app/build.gradle
       - name: Build APK
         working-directory: android
         run: ./gradlew assembleDebug
+      - name: Check the signing key is the permanent one
+        run: |
+          WANT=$(keytool -list -v -keystore android/app/fixed.keystore -storepass android -alias androiddebugkey | grep 'SHA256:' | head -1)
+          GOT=$(keytool -printcert -jarfile android/app/build/outputs/apk/debug/app-debug.apk | grep 'SHA256:' | head -1)
+          echo "want: $WANT"
+          echo "got:  $GOT"
+          test "$WANT" = "$GOT"
       - uses: actions/upload-artifact@v4
         with:
           name: FreshMart-APK
