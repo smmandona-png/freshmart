@@ -268,4 +268,25 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!anyOpen(
 
 window.BR={pick:i=>{const o=PICK[i];if(o)askWhich.cb(o.val)},exOk,dmInfo,dmOk,delExp,undoAdj,refresh};
 sanitize();
+})();/* v4.1: default profit margin (editable in Settings) and cleaner names */
+(function(){
+const mk=()=>{const m=+CFG.markup;return isFinite(m)&&m>=0?m:0};
+const KW=/\b(selling|sell|cost|costs|price|markup|quantity|qty)\b/gi;
+const _st=window.startStock;
+window.startStock=function(items){
+  items=items.filter(it=>{it.name=(it.name||'').replace(KW,' ').replace(/\s+/g,' ').trim();return it.name});
+  if(!items.length)return alert('I could not understand that. Try: add 10 bread cost 12 selling 15');
+  items.forEach(it=>{if(it.sell===null&&it.mark===null&&!findProduct(it.name,true))it.mark=mk()});
+  _st(items);
+};
+const _of=window.openForm;
+window.openForm=function(id){_of(id);if(!id){$('fMark').value=mk();calc()}};
+const _os=window.openSettings;
+window.openSettings=function(){
+  _os();
+  const h='<label>Default profit margin (%)</label><input id="cfMk" type="number" inputmode="decimal" step="0.1" min="0" value="'+mk()+'"><div class="muted">Used to suggest a selling price when you give only a cost. 0 means the selling price equals the cost until you set it.</div>';
+  $('vpanel').innerHTML=$('vpanel').innerHTML.replace('<div class="acts">',h+'<div class="acts">');
+};
+const _sv=window.saveSettings;
+window.saveSettings=function(){const e=$('cfMk'),v=e?parseFloat(e.value):NaN;_sv();if(v>=0){CFG.markup=v;saveC()}};
 })();
