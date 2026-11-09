@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FreshMart Key Maker</title>
+<style>body{font-family:system-ui,sans-serif;margin:0;padding:16px;background:#f3f6f4;color:#17211c;max-width:560px;margin:auto}h1{font-size:20px}h2{font-size:16px;margin:22px 0 6px}label{display:block;font-size:12px;color:#66756d;margin:10px 0 4px}input,select,textarea{width:100%;box-sizing:border-box;padding:12px;border:1px solid #cfd9d3;border-radius:10px;font-size:16px;font-family:inherit}textarea{font-size:12px;word-break:break-all}button{width:100%;margin-top:10px;padding:14px;border:0;border-radius:10px;background:#1b7f4b;color:#fff;font-weight:700;font-size:15px}.w{background:#fdecea;border-radius:10px;padding:10px;font-size:13px;margin-top:8px}</style></head><body>
+<h1>FreshMart Key Maker</h1>
+<div class="w">Private tool. Keep your <b>private key</b> secret. Anyone who has it can make codes.</div>
+<h2>1. Make my keys (only once)</h2>
+<button onclick="mk()">Make my keys</button>
+<label>Private key: save in WhatsApp to yourself. Never send it to anyone.</label><textarea id="prv" rows="4" placeholder="Private key"></textarea>
+<label>Public key: this one is safe to share. Send it to Claude.</label><textarea id="pub" rows="4" placeholder="Public key" readonly></textarea>
+<h2>2. Make a code for a shop</h2>
+<label>Shop name (exactly as in the app)</label><input id="shop" placeholder="e.g. Mandona Mart">
+<label>Paid for</label><select id="len"><option value="1">1 month</option><option value="3">3 months</option><option value="12">12 months</option></select>
+<label>Starting from (leave as today, or pick the old expiry date to extend)</label><input id="from" type="date">
+<button onclick="mkc()">Make code</button>
+<label>Code: copy it and send it to the shop on WhatsApp</label><textarea id="code" rows="5" readonly></textarea>
+<button onclick="cp()">Copy code</button>
+<script>
+const b64=b=>btoa(String.fromCharCode(...new Uint8Array(b))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const E={name:'ECDSA',namedCurve:'P-256'},$=i=>document.getElementById(i);
+const today=()=>new Date().toISOString().slice(0,10);
+$('from').value=today();
+try{$('prv').value=localStorage.getItem('fmk.prv')||'';$('pub').value=localStorage.getItem('fmk.pub')||''}catch(e){}
+async function mk(){
+  if($('prv').value&&!confirm('You already have keys. Making new ones will stop old codes from working in new apps. Continue?'))return;
+  const k=await crypto.subtle.generateKey(E,true,['sign','verify']);
+  const p=JSON.stringify(await crypto.subtle.exportKey('jwk',k.privateKey)),u=JSON.stringify(await crypto.subtle.exportKey('jwk',k.publicKey));
+  $('prv').value=p;$('pub').value=u;try{localStorage.setItem('fmk.prv',p);localStorage.setItem('fmk.pub',u)}catch(e){}
+}
+function addMonths(d,m){const x=new Date(d+'T00:00:00Z');x.setUTCMonth(x.getUTCMonth()+m);return x.toISOString().slice(0,10)}
+async function mkc(){
+  const shop=$('shop').value.trim();if(!shop)return alert('Enter the shop name.');
+  if(!$('prv').value)return alert('Make your keys first.');
+  let prv;try{prv=await crypto.subtle.importKey('jwk',JSON.parse($('prv').value),E,false,['sign'])}catch(e){return alert('That private key is not valid.')}
+  const until=addMonths($('from').value||today(),+$('len').value);
+  const msg=new TextEncoder().encode(shop+'|'+until);
+  const sig=await crypto.subtle.sign({name:'ECDSA',hash:'SHA-256'},prv,msg);
+  $('code').value=b64(msg)+'.'+b64(sig);
+  alert('Code made. Paid until '+until+' for '+shop);
+}
+function cp(){const t=$('code');t.select();try{navigator.clipboard.writeText(t.value)}catch(e){document.execCommand('copy')}}
+</script></body></html>
