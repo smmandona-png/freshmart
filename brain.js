@@ -289,4 +289,25 @@ window.openSettings=function(){
 };
 const _sv=window.saveSettings;
 window.saveSettings=function(){const e=$('cfMk'),v=e?parseFloat(e.value):NaN;_sv();if(v>=0){CFG.markup=v;saveC()}};
+})();/* v4.2: Back to home button on every screen, and the phone back key closes screens */
+(function(){
+const st=document.createElement('style');
+st.textContent='.back{display:block;width:100%;text-align:left;border:0;background:#fff;color:var(--g);font-weight:700;font-size:15px;padding:2px 0 12px;position:sticky;top:-16px;z-index:2}';
+document.head.appendChild(st);
+const mkBack=fn=>{const b=document.createElement('button');b.className='back';b.type='button';b.textContent='← Back to home';b.onclick=fn;return b};
+const vp=$('vpanel');
+new MutationObserver(()=>{if(!vp.firstElementChild||!vp.firstElementChild.classList.contains('back'))vp.insertBefore(mkBack(()=>closeV()),vp.firstChild)}).observe(vp,{childList:true});
+const f=document.querySelector('#sheet .panel'),r=document.querySelector('#rsheet .panel');
+f.insertBefore(mkBack(()=>closeForm()),f.firstChild);r.insertBefore(mkBack(()=>closeRec()),r.firstChild);
+let pushed=false,skip=false;
+const open=()=>document.querySelector('.sheet.on')!==null;
+const sync=()=>{
+  if(open()&&!pushed){history.pushState({fm:1},'');pushed=true}
+  else if(!open()&&pushed){pushed=false;skip=true;history.back()}
+};
+document.querySelectorAll('.sheet').forEach(s=>new MutationObserver(sync).observe(s,{attributes:true,attributeFilter:['class']}));
+window.addEventListener('popstate',()=>{
+  if(skip){skip=false;return}
+  if(pushed){pushed=false;closeV();closeForm();closeRec()}
+});
 })();
