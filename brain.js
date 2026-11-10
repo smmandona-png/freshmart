@@ -400,4 +400,66 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden){L.seen=Ma
 if(L.code)check(L.code).then(r=>{if(r.until!==L.until||!same(r.shop,L.shop)){L.until=r.until;L.shop=r.shop;save()}banner();render()},()=>{delete L.code;delete L.until;delete L.shop;save();banner();render()});
 window.LIC={activate,show,state};
 banner();
+})();/* v6: clean home screen, inventory on its own page */
+(function(){
+const st=document.createElement('style');
+st.textContent='';
+st.textContent+='.sum .mini{display:none}body{padding-bottom:24px}#tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:10px 12px 0}.tile{position:relative;background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:12px 2px 9px;display:flex;flex-direction:column;align-items:center;gap:3px;font:inherit;color:var(--tx);min-width:0}';
+st.textContent+='.tile:active{background:var(--gl)}.tile i{font-style:normal;font-size:26px;line-height:1.1}.tile b{font-size:12px}.tile small{font-size:10.5px;color:var(--mu);min-height:13px;white-space:nowrap}.tile.pri{background:var(--g);border-color:var(--g);color:#fff}.tile.pri small{color:#d6efe0}.tile.warn small{color:var(--red);font-weight:700}';
+st.textContent+='#strip{padding:10px 16px 0;font-size:12px;color:var(--mu);text-align:center}#invp{position:fixed;inset:0;background:var(--bg);z-index:8;display:none;overflow:auto}#invp.on{display:block}';
+st.textContent+='#invp .ih{position:sticky;top:0;z-index:3;background:linear-gradient(135deg,var(--g),var(--gd));color:#fff;padding:12px 14px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(0,0,0,.18)}#invp .ib{border:0;background:rgba(255,255,255,.2);color:#fff;border-radius:20px;padding:9px 14px;font-size:14px;font-weight:700}#invp .it{font-size:18px;font-weight:700}';
+st.textContent+='#invp .fab{display:block}#invpad{height:90px}';
+document.head.appendChild(st);
+const inv=document.createElement('div');inv.id='invp';
+inv.innerHTML='<div class="ih"><button class="ib" type="button">← Home</button><span class="it" id="invT">Inventory</span></div>';
+inv.querySelector('.ih').style.paddingTop=getComputedStyle(document.querySelector('header')).paddingTop;
+const tools=document.querySelector('.tools'),list=$('list'),fab=document.querySelector('.fab');
+inv.appendChild(tools);inv.appendChild(list);
+const pad=document.createElement('div');pad.id='invpad';inv.appendChild(pad);inv.appendChild(fab);
+document.body.insertBefore(inv,$('vsheet'));
+inv.addEventListener('touchstart',e=>e.stopPropagation(),{passive:true});
+let pushed=false,skip=false;
+function openInv(f){
+  setFilter(f==='low'||f==='out'?f:'all');$('q').value='';render();
+  inv.classList.add('on');inv.scrollTop=0;
+  if(!pushed){history.pushState({inv:1},'');pushed=true}
+}
+function closeInv(){
+  inv.classList.remove('on');
+  if(pushed){pushed=false;skip=true;history.back()}
+}inv.querySelector('.ib').onclick=closeInv;
+window.addEventListener('popstate',e=>{
+  if(skip){skip=false;return}
+  if(inv.classList.contains('on')&&!(e.state&&e.state.inv)){inv.classList.remove('on');pushed=false}
+},true);
+const T=[
+ ['inv','📦','Inventory','pri',()=>openInv()],
+ ['sell','🛒','Sell','',()=>{openInv();toast('Tap Sell on a product. Or say it on the home screen: "sold 2 bread".')}],
+ ['low','⚠️','Low stock','',()=>openInv(P.some(p=>status(p)==='low')?'low':P.some(p=>status(p)==='out')?'out':'all')],
+ ['sales','🧾','Sales','',()=>openSales()],
+ ['add','➕','Add product','',()=>openForm()],
+ ['exp','💸','Expense','',()=>{window.scrollTo(0,0);$('qa').value='spent ';$('qa').focus()}],
+ ['bk','💾','Backup','',()=>showBackup()],
+ ['set','⚙️','Settings','',()=>openSettings()]
+];
+const tl=document.createElement('section');tl.id='tiles';
+T.forEach(t=>{const b=document.createElement('button');b.type='button';b.className='tile '+t[3];b.id='t_'+t[0];b.innerHTML='<i>'+t[1]+'</i><b>'+t[2]+'</b><small>&nbsp;</small>';b.onclick=t[4];tl.appendChild(b)});
+document.querySelector('.cmd').after(tl);
+const strip=document.createElement('div');strip.id='strip';tl.after(strip);
+const sub=(id,t,w)=>{const b=$('t_'+id);b.querySelector('small').textContent=t||' ';b.classList.toggle('warn',!!w)};
+const _r=window.render;
+window.render=function(){
+  _r();
+  try{
+    const n=P.length,lo=P.filter(p=>status(p)!=='ok').length;
+    sub('inv',n+(n===1?' product':' products'));
+    sub('low',lo?lo+' to restock':'All good',lo);
+    $('invT').textContent='Inventory ('+n+')';
+    strip.innerHTML='Stock worth <b>'+$('sValue').textContent+'</b> · Profit if sold <b>'+$('sProfit').textContent+'</b>';
+    const em=document.querySelector('#list .empty');
+    if(em&&!P.length)em.innerHTML='No products yet.<br>Go back home and use the <b>Stock in</b> box,<br>e.g. “bread 20 cost 12 selling 15”.';
+  }catch(e){}
+};
+window.openInv=openInv;window.closeInv=closeInv;
+render();
 })();
