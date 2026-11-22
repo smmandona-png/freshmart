@@ -522,4 +522,37 @@ document.addEventListener('touchend',e=>{
   if(dx>0)openMore();else closeMore();
 },{passive:true});
 window.openMore=openMore;window.closeMore=closeMore;
+})();/* v8.1: make the swipe work on phones */
+(function(){
+const s=document.createElement('style');s.textContent='html,body{touch-action:pan-y}';document.head.appendChild(s);
+let x0=null,y0=null,x1=0,y1=0;
+const busy=()=>document.querySelector('.sheet.on')!==null||$('invp').classList.contains('on');
+document.addEventListener('touchstart',e=>{x0=e.touches[0].clientX;y0=e.touches[0].clientY;x1=x0;y1=y0},{passive:true});
+document.addEventListener('touchmove',e=>{x1=e.touches[0].clientX;y1=e.touches[0].clientY},{passive:true});
+const end=()=>{if(x0===null)return;const dx=x1-x0,dy=y1-y0;x0=null;if(Math.abs(dx)<70||Math.abs(dy)>Math.abs(dx)/1.5||busy())return;if(dx>0)openMore();else closeMore()};
+document.addEventListener('touchend',end,{passive:true});
+document.addEventListener('touchcancel',end,{passive:true});
+})();
+
+/* v9: voice replies */
+(function(){
+const K='fm.voice',on=()=>{try{return localStorage.getItem(K)!=='off'}catch(e){return true}};
+try{const _s=speechSynthesis.speak.bind(speechSynthesis);speechSynthesis.speak=u=>{if(on())_s(u)}}catch(e){}
+function say(t,q){if(!on())return;try{if(!q)speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-GB';speechSynthesis.speak(u)}catch(e){}}
+const clean=t=>t.replace(/K(\d[\d,.]*)/g,'$1 kwacha').replace(/[✓🎤]/g,'').replace(/\s*·\s*/g,'. ').replace(/\s+/g,' ').trim();
+const _t=window.toast;
+window.toast=function(t){_t(t);if(/^(Sale saved|Saved|Stock added|Expense saved|Removed|Sale undone|Backup restored)/.test(t))say(clean(t))};
+const _c=window.confirmSale;
+window.confirmSale=function(){
+  const b=new Set(P.filter(p=>status(p)!=='ok').map(p=>p.id));
+  const r=_c.apply(this,arguments);
+  const n=P.filter(p=>status(p)!=='ok'&&!b.has(p.id));
+  if(n.length)say(n.map(p=>p.name+(status(p)==='out'?' is finished':' is running low')).join('. '),true);
+  return r;
+};
+const _o=window.openSettings;
+window.openSettings=function(){
+  _o();
+  $('vpanel').innerHTML=$('vpanel').innerHTML.replace('<div class="hr">','<label>Voice replies</label><label style="display:flex;gap:10px;align-items:center;font-size:15px"><input type="checkbox" id="vcOn" style="width:auto"'+(on()?' checked':'')+' onchange="try{localStorage.setItem(\''+K+'\',this.checked?\'on\':\'off\')}catch(e){}"> Speak confirmations and answers</label><div class="hr">');
+};
 })();
